@@ -1,0 +1,4 @@
+__pycache__/
+*.pyc
+*.tmp
+bronze_crime_news.json
