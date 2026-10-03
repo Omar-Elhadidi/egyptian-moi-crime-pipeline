@@ -1,6 +1,23 @@
+# Byte-compiled / optimized / cache files
 __pycache__/
-*.pyc
+*.py[cod]
+*$py.class
 *.tmp
+
+# Virtual Environments
+.venv/
+venv/
+env/
+ENV/
+
+# Data Files (Stored in Bronze/Silver storage, not Git)
 bronze_crime_news.json
 silver_crime_news.parquet
-*.parquet
+*.parquet
+*.jsonl
+
+# IDE and OS files
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
