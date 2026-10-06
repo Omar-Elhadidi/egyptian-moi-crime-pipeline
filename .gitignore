@@ -4,11 +4,13 @@ __pycache__/
 *$py.class
 *.tmp
 
-# Virtual Environments
+# Virtual Environments & Secrets
 .venv/
 venv/
 env/
 ENV/
+.env
+*.env
 
 # Data Files (Stored in Bronze/Silver storage, not Git)
 bronze_crime_news.json
