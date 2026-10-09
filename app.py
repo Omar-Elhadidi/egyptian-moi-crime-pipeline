@@ -115,6 +115,42 @@ DIM_LOCATION_MAP = {
     27: ("جنوب سيناء", "South Sinai", "Frontier"),
 }
 
+# Centroid coordinates (lat, lon) for Egyptian Governorates
+EGYPT_GOV_COORDS = {
+    # Greater Cairo
+    "القاهرة": (30.0444, 31.2357),
+    "الجيزة": (30.0131, 31.2089),
+    "القليوبية": (30.4660, 31.1856),
+    # Alexandria & Delta
+    "الإسكندرية": (31.2001, 29.9187),
+    "البحيرة": (31.0364, 30.4699),
+    "كفر الشيخ": (31.1107, 30.9388),
+    "الغربية": (30.7865, 31.0004),
+    "المنوفية": (30.5972, 30.9876),
+    "الدقهلية": (31.0409, 31.3785),
+    "الشرقية": (30.5877, 31.5020),
+    "دمياط": (31.4175, 31.8144),
+    # Canal Zone
+    "بورسعيد": (31.2653, 32.3019),
+    "الإسماعيلية": (30.5965, 32.2715),
+    "السويس": (29.9668, 32.5498),
+    # Upper Egypt
+    "الفيوم": (29.3084, 30.8428),
+    "بني سويف": (29.0661, 31.0994),
+    "المنيا": (28.0871, 30.7618),
+    "أسيوط": (27.1783, 31.1859),
+    "سوهاج": (26.5590, 31.6957),
+    "قنا": (26.1551, 32.7160),
+    "الأقصر": (25.6872, 32.6396),
+    "أسوان": (24.0889, 32.8998),
+    # Frontier
+    "البحر الأحمر": (27.2579, 33.8116),
+    "الوادي الجديد": (25.4514, 30.5464),
+    "مطروح": (31.3543, 27.2373),
+    "شمال سيناء": (31.1316, 33.7984),
+    "جنوب سيناء": (28.2431, 33.6231),
+}
+
 DIM_CRIME_MAP = {
     0: ("غير مصنف / أخرى", "Unclassified / Other", 1),
     1: ("بلطجة وفرض سيطرة", "Thuggery & Coercion", 4),
@@ -381,10 +417,86 @@ tab_geo, tab_trends, tab_crimes, tab_data, tab_nlp = st.tabs([
 
 
 # -----------------------------------------------------------------------------
-# TAB 1: GEOGRAPHIC DISTRIBUTION
+# TAB 1: GEOGRAPHIC DISTRIBUTION & EGYPT HEATMAP
 # -----------------------------------------------------------------------------
 with tab_geo:
-    st.subheader("Geographic Crime Hotspots across Egyptian Governorates")
+    st.subheader("🗺️ Geographic Crime Hotspots & Egypt Heatmap")
+
+    # Map controls header
+    map_col1, map_col2 = st.columns([3, 1])
+    with map_col1:
+        st.markdown("*Interactive spatial view across all 27 Egyptian governorates*")
+    with map_col2:
+        map_mode = st.radio(
+            "Map Visualization:",
+            options=["🔥 Density Heatmap", "📍 Hotspot Bubbles"],
+            horizontal=True
+        )
+
+    # Aggregate by governorate with coordinates
+    geo_df = (
+        df_filtered[df_filtered["governorate_ar"].isin(EGYPT_GOV_COORDS.keys())]
+        .groupby(["governorate_ar", "governorate_en", "region"])
+        .agg(
+            incidents=("incident_count", "sum"),
+            suspects=("suspects_count", "sum"),
+            weapons=("weapons_count", "sum")
+        )
+        .reset_index()
+    )
+
+    if not geo_df.empty:
+        geo_df["lat"] = geo_df["governorate_ar"].map(lambda g: EGYPT_GOV_COORDS[g][0])
+        geo_df["lon"] = geo_df["governorate_ar"].map(lambda g: EGYPT_GOV_COORDS[g][1])
+
+        if map_mode == "🔥 Density Heatmap":
+            fig_map = px.density_map(
+                geo_df,
+                lat="lat",
+                lon="lon",
+                z="incidents",
+                radius=32,
+                center=dict(lat=26.8, lon=30.8),
+                zoom=5,
+                map_style="carto-darkmatter",
+                color_continuous_scale="Reds",
+                title="Egypt Crime Density Heatmap"
+            )
+        else:
+            fig_map = px.scatter_map(
+                geo_df,
+                lat="lat",
+                lon="lon",
+                size="incidents",
+                color="incidents",
+                hover_name="governorate_ar",
+                hover_data={
+                    "governorate_en": True,
+                    "incidents": True,
+                    "suspects": True,
+                    "weapons": True,
+                    "lat": False,
+                    "lon": False
+                },
+                center=dict(lat=26.8, lon=30.8),
+                zoom=5,
+                map_style="carto-darkmatter",
+                color_continuous_scale="Reds",
+                size_max=35,
+                title="Egyptian Governorates Crime Hotspots"
+            )
+
+        fig_map.update_layout(
+            template="plotly_dark",
+            margin=dict(l=0, r=0, t=35, b=0),
+            height=460
+        )
+        st.plotly_chart(fig_map, width="stretch")
+    else:
+        st.info("No geographic data matching current filters.")
+
+    st.markdown("---")
+    st.subheader("Governorate & Regional Breakdowns")
     
     col_left, col_right = st.columns([3, 2])
     
