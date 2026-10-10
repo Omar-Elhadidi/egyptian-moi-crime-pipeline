@@ -12,11 +12,10 @@ ENV/
 .env
 *.env
 
-# Data Files (Stored in Bronze/Silver storage, not Git)
+# Data Files (Stored in Bronze storage, not Git)
 bronze_crime_news.json
-silver_crime_news.parquet
-*.parquet
 *.jsonl
+
 
 # IDE and OS files
 .vscode/

@@ -16,7 +16,8 @@ pyarrow>=15.0.0
 psycopg2-binary>=2.9.9
 sqlalchemy>=2.0.0
 
-# Serving & Analytics Dashboard
+# Serving & Analytics Dashboards
 streamlit>=1.32.0
 plotly>=5.20.0
 
+python-dotenv>=1.2.4
