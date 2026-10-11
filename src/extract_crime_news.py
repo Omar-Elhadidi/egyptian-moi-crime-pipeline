@@ -104,7 +104,10 @@ def extract_crime_cases(start_page=1, end_page=None, output_path=None, delay=0.2
     4. Auto-detects total page count if end_page is None.
     """
     if output_path is None:
-        output_path = Path(__file__).parent / "bronze_crime_news.json"
+        project_root = Path(__file__).resolve().parent.parent
+        data_dir = project_root / "data"
+        data_dir.mkdir(parents=True, exist_ok=True)
+        output_path = data_dir / "bronze_crime_news.json"
     else:
         output_path = Path(output_path)
 

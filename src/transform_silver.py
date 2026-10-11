@@ -170,11 +170,13 @@ def extract_metrics(title, full_details):
 # 5. Main Silver Transformation Pipeline
 # =============================================================================
 def transform_bronze_to_silver(bronze_file=None, silver_file=None):
-    base_dir = Path(__file__).parent
+    project_root = Path(__file__).resolve().parent.parent
+    data_dir = project_root / "data"
+    data_dir.mkdir(parents=True, exist_ok=True)
     if bronze_file is None:
-        bronze_file = base_dir / "bronze_crime_news.json"
+        bronze_file = data_dir / "bronze_crime_news.json"
     if silver_file is None:
-        silver_file = base_dir / "silver_crime_news.parquet"
+        silver_file = data_dir / "silver_crime_news.parquet"
 
     print("=" * 70)
     print("🚀 STARTING SILVER TRANSFORMATION PIPELINE")

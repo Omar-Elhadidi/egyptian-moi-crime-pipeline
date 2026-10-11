@@ -227,9 +227,11 @@ def load_data():
         return df, "PostgreSQL (Gold Warehouse)"
     except Exception:
         # Fallback to local Silver Parquet
-        parquet_path = Path(__file__).parent / "silver_crime_news.parquet"
+        parquet_path = Path(__file__).parent / "data" / "silver_crime_news.parquet"
         if not parquet_path.exists():
-            raise FileNotFoundError("Neither PostgreSQL nor silver_crime_news.parquet is accessible.")
+            parquet_path = Path(__file__).parent / "silver_crime_news.parquet"
+        if not parquet_path.exists():
+            raise FileNotFoundError("Neither PostgreSQL nor data/silver_crime_news.parquet is accessible.")
         
         df = pd.read_parquet(parquet_path)
         
@@ -722,14 +724,14 @@ with tab_nlp:
     )
     
     if st.button("🚀 Run Extraction & Classification Pipeline", type="primary"):
-        # Import extraction engine from transform_silver.py
         try:
-            from transform_silver import (
+            # Import extraction engine from src/transform_silver.py
+            from src.transform_silver import (
                 extract_location_id,
                 extract_crime_type_id,
                 extract_metrics,
                 GOVERNORATES,
-                CRIME_TAXONOMY
+                CRIME_TAXONOMY,
             )
             
             loc_id = extract_location_id(user_input, user_input)

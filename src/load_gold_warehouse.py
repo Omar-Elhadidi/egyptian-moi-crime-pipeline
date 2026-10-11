@@ -5,8 +5,10 @@ from pathlib import Path
 import pandas as pd
 import psycopg2
 from psycopg2.extras import execute_values
-from  dotenv import load_dotenv
-load_dotenv() 
+from dotenv import load_dotenv
+
+PROJECT_ROOT = Path(__file__).resolve().parent.parent
+load_dotenv(dotenv_path=PROJECT_ROOT / ".env")
 
 
 # Ensure UTF-8 output in Windows PowerShell/cmd terminals
@@ -19,10 +21,10 @@ def load_silver_to_gold(parquet_path=None):
     Bulk loads records from Silver Parquet into PostgreSQL Gold Warehouse (fact_crime).
     Guarantees idempotency via ON CONFLICT (news_id) DO NOTHING.
     """
-    base_dir = Path(__file__).parent
+    data_dir = PROJECT_ROOT / "data"
 
     if parquet_path is None:
-        parquet_path = base_dir / "silver_crime_news.parquet"
+        parquet_path = data_dir / "silver_crime_news.parquet"
     else:
         parquet_path = Path(parquet_path)
 

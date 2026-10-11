@@ -13,7 +13,9 @@ ENV/
 *.env
 
 # Data Files (Stored in Bronze storage, not Git)
+data/bronze_crime_news.json
 bronze_crime_news.json
+*.json
 *.jsonl
 
 
