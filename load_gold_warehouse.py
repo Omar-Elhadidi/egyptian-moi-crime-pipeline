@@ -64,26 +64,19 @@ def load_silver_to_gold(parquet_path=None):
         for _, row in df.iterrows()
     ]
 
-    # 2. Connect to PostgreSQL
-    db_host = os.getenv("DB_HOST", "localhost")
-    db_port = os.getenv("DB_PORT", "5432")
-    db_name = os.getenv("DB_NAME", "moi_crime_dw")
-    db_user = os.getenv("DB_USER", "postgres")
-    db_pass = os.getenv("DB_PASSWORD", "")
-
     conn = None
 
     try:
         with psycopg2.connect(
-            host=db_host,
-            port=db_port,
-            dbname=db_name,
-            user=db_user,
-            password=db_pass
+            host = os.getenv("DB_HOST", "localhost"),
+            port = os.getenv("DB_PORT", "5432"),
+            dbname = os.getenv("DB_NAME", "moi_crime_dw"),
+            user = os.getenv("DB_USER", "postgres"),
+            password = os.getenv("DB_PASSWORD", "")
         ) as conn:
             
             with conn.cursor() as cursor:
-                print(f" Connected to PostgreSQL: {db_user}@{db_host}:{db_port}/{db_name}")
+                print(f" Connected to PostgreSQL")
 
                 # 3. Fast Bulk Insert using execute_values
                 insert_query = """
